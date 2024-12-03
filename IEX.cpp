@@ -1,6 +1,4 @@
 /* UNOFFICIAL IEX TRADING API for C++
- BY: Justin Chudley
- https://github.com/Chudleyj/
  OFFICIAL API: https://iextrading.com/developer/docs/
  Refer to the official docs to understand the return of each function.
  GET examples and JSON examples commented above each function are from the offical API.

@@ -1,3 +1,4 @@
+#include "rest_client.h"
 #include <boost/beast.hpp>
 #include <boost/asio.hpp>
 #include <iostream>
@@ -10,22 +11,11 @@ namespace asio = boost::asio;
 namespace http = beast::http;
 using namespace std;
 
-class RestClient
-{
-
-private:
-    string host;                      // Host to connect to
-    string port;                      // Port to connect to
-    asio::io_context io_context;      // IO context for Asio
-    asio::ip::tcp::resolver resolver; // Resolver for DNS resolution
-    beast::tcp_stream stream;         // Stream for HTTP Communication
-
-public:
-    RestClient(const string &host, const string &port)
+    RestClient::RestClient(const string &host, const string &port)
         : host(host), port(port), io_context(), resolver(io_context), stream(io_context) {}
 
     // send GET Req
-    string send_get_request(const string &target)
+    string RestClient::send_get_request(const string &target)
     {
         try
         {
@@ -58,4 +48,3 @@ public:
         }
 
     }
-};

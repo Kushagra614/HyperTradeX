@@ -1,5 +1,4 @@
-#ifndef rest_client_h
-#define rest_client_h
+#pragma once
 
 #include <string>
 #include <boost/beast.hpp>
@@ -30,4 +29,3 @@ public:
     string send_get_request(const string &target);
 };
 
-#endif

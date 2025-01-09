@@ -18,7 +18,7 @@ set(SOURCES
     src/rest_api/rest_client.cpp
     src/websocket/websocket_client.cpp
     src/utils/logger.cpp
-    src/models/order.cpp
+    src/models/order_book.cpp
     src/config/config.cpp
 )
 

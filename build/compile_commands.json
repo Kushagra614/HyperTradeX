@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/main.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/main.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/main.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/main.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/binance/binance_api.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/binance/binance_api.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/binance/binance_api.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/binance/binance_api.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/binance/binance_ws_client.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/binance/binance_ws_client.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/binance/binance_ws_client.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/binance/binance_ws_client.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/websocket/websocket_server.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/websocket/websocket_server.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/websocket/websocket_server.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/websocket/websocket_server.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/models/orderbook.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/models/orderbook.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/models/orderbook.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/models/orderbook.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/utils/logger.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/utils/logger.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/utils/logger.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/utils/logger.cpp.o"
+},
+{
+  "directory": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build",
+  "command": "/usr/bin/g++   -g -std=gnu++17 -o CMakeFiles/HyperTradeX.dir/src/utils/config.cpp.o -c \"/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/utils/config.cpp\"",
+  "file": "/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/src/utils/config.cpp",
+  "output": "CMakeFiles/HyperTradeX.dir/src/utils/config.cpp.o"
+}
+]

@@ -1,0 +1,3 @@
+/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build/CMakeFiles/HyperTradeX.dir
+/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build/CMakeFiles/edit_cache.dir
+/mnt/d/ME/Work/Codeverse/Coding/C++/Projects C++/HyperTradeX/build/CMakeFiles/rebuild_cache.dir

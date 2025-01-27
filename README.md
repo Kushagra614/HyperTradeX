@@ -1,1 +1,0 @@
-# HyperTradeX

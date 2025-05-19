@@ -1,4 +1,5 @@
 #include "TechnicalAnalysis.h"
+#include <limits>
 
 /* TODO STILL UNDER CONSTRUCTION
    void TechnicalAnalysis::calcSD()
@@ -375,3 +376,186 @@ void TechnicalAnalysis::calcStochRSI()
         }
 }
 /*-------------------- END RSI  --------------------*/
+
+std::vector<double> TechnicalAnalysis::calculateSMA(const std::vector<double>& prices, int period) const {
+    std::vector<double> sma;
+    if (prices.size() < period) {
+        return sma;
+    }
+    
+    // Calculate first SMA
+    double sum = 0.0;
+    for (int i = 0; i < period; ++i) {
+        sum += prices[i];
+    }
+    sma.push_back(sum / period);
+    
+    // Calculate remaining SMAs using the previous value
+    for (size_t i = period; i < prices.size(); ++i) {
+        sum = sum - prices[i - period] + prices[i];
+        sma.push_back(sum / period);
+    }
+    
+    // Pad the beginning with NaN values to match input size
+    std::vector<double> result(prices.size(), std::numeric_limits<double>::quiet_NaN());
+    std::copy(sma.begin(), sma.end(), result.begin() + period - 1);
+    
+    return result;
+}
+
+void TechnicalAnalysis::setFifSMA(const double& value) {
+    indicators.fiftySMA.push_back(value);
+}
+
+void TechnicalAnalysis::setHundSMA(const double& value) {
+    indicators.hundredSMA.push_back(value);
+}
+
+void TechnicalAnalysis::setHundFifSMA(const double& value) {
+    indicators.hundFifSMA.push_back(value);
+}
+
+void TechnicalAnalysis::setTwoHundSMA(const double& value) {
+    indicators.twoHundSMA.push_back(value);
+}
+
+void TechnicalAnalysis::setFifEMA(const double& value) {
+    indicators.fiftyEMA.push_back(value);
+}
+
+void TechnicalAnalysis::setHundEMA(const double& value) {
+    indicators.hundredEMA.push_back(value);
+}
+
+void TechnicalAnalysis::setHundFifEMA(const double& value) {
+    indicators.hundFifEMA.push_back(value);
+}
+
+void TechnicalAnalysis::setTwoHundEMA(const double& value) {
+    indicators.twoHundEMA.push_back(value);
+}
+
+void TechnicalAnalysis::setRSI(const double& value) {
+    indicators.RSI.push_back(value);
+}
+
+void TechnicalAnalysis::setStoch(const double& value) {
+    indicators.stochRSI.push_back(value);
+}
+
+void TechnicalAnalysis::setMACD(const double& value) {
+    indicators.MACD.push_back(value);
+}
+
+void TechnicalAnalysis::setSignal(const double& value) {
+    indicators.MACD_Signal.push_back(value);
+}
+
+void TechnicalAnalysis::getRSI(std::vector<double>& vec) const {
+    vec = indicators.RSI;
+}
+
+void TechnicalAnalysis::getStoch(std::vector<double>& vec) const {
+    vec = indicators.stochRSI;
+}
+
+void TechnicalAnalysis::getFifSMA(std::vector<double>& vec) const {
+    vec = indicators.fiftySMA;
+}
+
+void TechnicalAnalysis::getHundSMA(std::vector<double>& vec) const {
+    vec = indicators.hundredSMA;
+}
+
+void TechnicalAnalysis::getHundFifSMA(std::vector<double>& vec) const {
+    vec = indicators.hundFifSMA;
+}
+
+void TechnicalAnalysis::getTwoHundSMA(std::vector<double>& vec) const {
+    vec = indicators.twoHundSMA;
+}
+
+void TechnicalAnalysis::getFifEMA(std::vector<double>& vec) const {
+    vec = indicators.fiftyEMA;
+}
+
+void TechnicalAnalysis::getHundEMA(std::vector<double>& vec) const {
+    vec = indicators.hundredEMA;
+}
+
+void TechnicalAnalysis::getHundFifEMA(std::vector<double>& vec) const {
+    vec = indicators.hundFifEMA;
+}
+
+void TechnicalAnalysis::getTwoHundEMA(std::vector<double>& vec) const {
+    vec = indicators.twoHundEMA;
+}
+
+void TechnicalAnalysis::getMACD(std::vector<double>& vec) const {
+    vec = indicators.MACD;
+}
+
+void TechnicalAnalysis::getSignal(std::vector<double>& vec) const {
+    vec = indicators.MACD_Signal;
+}
+
+void TechnicalAnalysis::calcMACD(JSONdata &HistoricalData) {
+    assert(!HistoricalData.isEmpty());
+
+    // Calculate 12-day EMA
+    std::vector<double> closePrices;
+    HistoricalData.accessClose(closePrices);
+    
+    if (closePrices.size() < 26) {
+        std::cout << std::endl << "NOT ENOUGH DATA FOR MACD CALCULATION";
+        return;
+    }
+
+    // Calculate 12-day EMA
+    std::vector<double> ema12 = calculateEMA(closePrices, 12);
+    // Calculate 26-day EMA
+    std::vector<double> ema26 = calculateEMA(closePrices, 26);
+    
+    // Calculate MACD line (12-day EMA - 26-day EMA)
+    for (size_t i = 0; i < ema12.size(); ++i) {
+        if (i < ema26.size()) {
+            setMACD(ema12[i] - ema26[i]);
+        }
+    }
+    
+    // Calculate Signal line (9-day EMA of MACD)
+    std::vector<double> macdLine;
+    getMACD(macdLine);
+    std::vector<double> signalLine = calculateEMA(macdLine, 9);
+    
+    for (const auto& value : signalLine) {
+        setSignal(value);
+    }
+}
+
+std::vector<double> TechnicalAnalysis::calculateEMA(const std::vector<double>& prices, int period) const {
+    std::vector<double> ema;
+    if (prices.size() < period) {
+        return ema;
+    }
+    
+    // Calculate first EMA using SMA
+    double sum = 0.0;
+    for (int i = 0; i < period; ++i) {
+        sum += prices[i];
+    }
+    double multiplier = 2.0 / (period + 1);
+    ema.push_back(sum / period);
+    
+    // Calculate remaining EMAs
+    for (size_t i = period; i < prices.size(); ++i) {
+        double currentEMA = (prices[i] - ema.back()) * multiplier + ema.back();
+        ema.push_back(currentEMA);
+    }
+    
+    // Pad the beginning with NaN values to match input size
+    std::vector<double> result(prices.size(), std::numeric_limits<double>::quiet_NaN());
+    std::copy(ema.begin(), ema.end(), result.begin() + period - 1);
+    
+    return result;
+}

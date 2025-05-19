@@ -5,12 +5,14 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <ctime>
+#include <iostream>
 #include <boost/optional.hpp>
-#include <json/json.h>
+#include <nlohmann/json.hpp>
 
-/* This class store the values of data fetched from the IEX::stocks::chartRange
-   function inside the priceData struct. It's member functions are
-   explain in the file JSONdata.cpp. The priceData struct is passed to the
+/* This class stores the values of data fetched from Yahoo Finance
+   inside the priceData struct. Its member functions are explained
+   in the file JSONdata.cpp. The priceData struct is passed to the
    TechnicalAnalysis class for calculations. */
 class JSONdata
 {
@@ -88,10 +90,16 @@ void getLabel(std::vector<std::string> &) const;
 void getVol(std::vector<long long> &) const;
 void getUnAdjVol(std::vector<long long> &) const;
 
-
 bool isEmpty() const;
 void clearJSONstruct();
-void parseIEXdata(const Json::Value &);
+void parseYahooData(const std::string& jsonStr);
+
+const std::vector<std::string>& getDates() const { return pricingData.date; }
+const std::vector<double>& getClose() const { return pricingData.close; }
+const std::vector<double>& getOpen() const { return pricingData.open; }
+const std::vector<double>& getHigh() const { return pricingData.high; }
+const std::vector<double>& getLow() const { return pricingData.low; }
+const std::vector<long long>& getVolume() const { return pricingData.volume; }
 
 };
 

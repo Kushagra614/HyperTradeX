@@ -1,4 +1,5 @@
 #include "JSONdata.h"
+#include <nlohmann/json.hpp>
 
 std::mutex _mtx; //For std::lock_guard
 
@@ -269,57 +270,6 @@ void JSONdata::getUnAdjVol(std::vector<long long> &copy) const
         copy = pricingData.unadjustedVolume;
 }
 
-/* This function will take the data fetched by the IEX::stocks::chartRange()
-   function. It will then parse that data into its corresponding vector inside
-   the priceData struct */
-void JSONdata::parseIEXdata(const Json::Value &IEXdata)
-{
-        assert(!IEXdata.empty() && isEmpty());
-
-        int i = 0;
-        double temp;
-        long long temp_lng;
-        std::string temp_str;
-
-        //Step through JSON file until the end is reached
-        while(i < IEXdata.size()) {
-                //Parse the JSON data into the struct
-                temp = IEXdata[i]["open"].asDouble();
-                accessOpen(boost::none, temp);
-
-                temp = IEXdata[i]["low"].asDouble();
-                accessLow(boost::none, temp);
-
-                temp = IEXdata[i]["close"].asDouble();
-                accessClose(boost::none, temp);
-
-                temp = IEXdata[i]["change"].asDouble();
-                accessChange(boost::none, temp);
-
-                temp = IEXdata[i]["changePercent"].asDouble();
-                accessChgPer(boost::none, temp);
-
-                temp = IEXdata[i]["vmap"].asDouble();
-                accessVmap(boost::none, temp);
-
-                temp = IEXdata[i]["changeOverTime"].asDouble();
-                accessChgOvrTime(boost::none, temp);
-
-                temp_lng = IEXdata[i]["volume"].asInt64();
-                accessVol(boost::none, temp_lng);
-
-                temp_lng = IEXdata[i]["unadjustedVolume"].asInt64();
-                accessUnAdjVol(boost::none, temp_lng);
-
-                temp_str = IEXdata[i]["date"].asString();
-                accessDate(boost::none, temp_str);
-
-                temp_str = IEXdata[i]["date"].asString();
-                accessLabel(boost::none,temp_str);
-                i++;
-        }
-}
-
 /* Clear all the data out of the vectors
    This is done because the data needs to be always as up to date as possible
    So, the data is gathered once, passed off to the Tech Analysis class for
@@ -386,4 +336,68 @@ bool JSONdata::isEmpty() const
 
         else
                 return true;
+}
+
+void JSONdata::parseYahooData(const std::string& jsonStr) {
+    using json = nlohmann::json;
+    try {
+        auto j = json::parse(jsonStr);
+        
+        // Check for error in response
+        if (j.contains("error")) {
+            throw std::runtime_error("Error from Yahoo Finance: " + j["error"].get<std::string>());
+        }
+        
+        // Clear current data before parsing new data
+        this->clearJSONstruct();
+        
+        // Get the data array
+        const auto& data = j["data"];
+        
+        // Process each data point
+        for (const auto& rec : data) {
+            // Use access functions for thread safety
+            accessOpen(boost::none, rec["open"].get<double>());
+            accessHigh(boost::none, rec["high"].get<double>());
+            accessLow(boost::none, rec["low"].get<double>());
+            accessClose(boost::none, rec["close"].get<double>());
+            accessVol(boost::none, rec["volume"].get<long long>());
+            accessDate(boost::none, rec["date"].get<std::string>());
+            accessLabel(boost::none, rec["date"].get<std::string>()); // Use same date for label
+            
+            // Calculate change and change percent
+            if (!pricingData.close.empty() && pricingData.close.size() > 1) {
+                double change = pricingData.close.back() - pricingData.close[pricingData.close.size() - 2];
+                double changePercent = (change / pricingData.close[pricingData.close.size() - 2]) * 100.0;
+                accessChange(boost::none, change);
+                accessChgPer(boost::none, changePercent);
+            } else {
+                accessChange(boost::none, 0.0);
+                accessChgPer(boost::none, 0.0);
+            }
+            
+            // Set unadjusted volume same as volume for now
+            accessUnAdjVol(boost::none, rec["volume"].get<long long>());
+            
+            // Calculate vmap (Volume-weighted average price)
+            double vmap = (rec["high"].get<double>() + rec["low"].get<double>() + rec["close"].get<double>()) / 3.0;
+            accessVmap(boost::none, vmap);
+            
+            // Calculate change over time (cumulative return)
+            if (!pricingData.close.empty() && pricingData.close.size() > 1) {
+                double firstPrice = pricingData.close[0];
+                double currentPrice = pricingData.close.back();
+                double changeOverTime = ((currentPrice - firstPrice) / firstPrice) * 100.0;
+                accessChgOvrTime(boost::none, changeOverTime);
+            } else {
+                accessChgOvrTime(boost::none, 0.0);
+            }
+        }
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parsing Yahoo Finance JSON data: " << e.what() << std::endl;
+        throw;
+    } catch (const std::exception& e) {
+        std::cerr << "Error processing Yahoo Finance data: " << e.what() << std::endl;
+        throw;
+    }
 }

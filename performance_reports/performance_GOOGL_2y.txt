@@ -1,0 +1,21 @@
+=== Performance Report ===
+Symbol: GOOGL
+Duration: 2y
+Initial Capital: $10000.00
+Final Capital: $9846.71
+Total Return: -1.53%
+Annualized Return: -85.72%
+Sharpe Ratio: -1.17
+Maximum Drawdown: 4.27%
+
+Trade Statistics:
+Total Trades: 25
+Winning Trades: 9
+Losing Trades: 16
+Win Rate: 36.00%
+Profit Factor: 0.81
+Average Win: $73.31
+Average Loss: $50.82
+Largest Win: $196.43
+Largest Loss: $-164.45
+========================

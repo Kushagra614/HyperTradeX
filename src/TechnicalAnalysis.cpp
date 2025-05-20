@@ -1,4 +1,4 @@
-#include "TechnicalAnalysis.h"
+#include "../include/TechnicalAnalysis.h"
 #include <limits>
 
 /* TODO STILL UNDER CONSTRUCTION
@@ -79,7 +79,8 @@ void TechnicalAnalysis::calcFiftyEMA(JSONdata &HistoricalData)
         assert(!HistoricalData.isEmpty());
 
         double SMA = 0.0, sum = 0.0, multipler = 0.0;
-        int period = 50, j = 0;
+        const size_t period = 50;
+        size_t j = 0;
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
 
@@ -90,7 +91,7 @@ void TechnicalAnalysis::calcFiftyEMA(JSONdata &HistoricalData)
 
         std::vector<double> tempEMA;
 
-        for(int i = 0; i < period; i++)
+        for(size_t i = 0; i < period; i++)
                 sum += closePrices[i];
 
         SMA = sum/period;
@@ -98,7 +99,7 @@ void TechnicalAnalysis::calcFiftyEMA(JSONdata &HistoricalData)
         setFifEMA(SMA);
         multipler = 2/(period + 1);
 
-        for(int i = period; i <= (closePrices.size() - period); i++) {
+        for(size_t i = period; i <= (closePrices.size() - period); i++) {
                 tempEMA.push_back((closePrices[i]-tempEMA[j])*multipler+tempEMA[j]);
                 j++;
                 setFifEMA(tempEMA[j]);
@@ -110,10 +111,10 @@ void TechnicalAnalysis::calcHundredEMA(JSONdata &HistoricalData)
         assert(!HistoricalData.isEmpty());
 
         double SMA = 0.0, sum = 0.0, multipler = 0.0;
-        int period = 100, j = 0;
+        const size_t period = 100;
+        size_t j = 0;
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
-
 
         if(closePrices.size() <= period){
           std::cout<<std::endl <<"NOT ENOUGH DATA FOR " << period << " DAY EMA YET";
@@ -122,7 +123,7 @@ void TechnicalAnalysis::calcHundredEMA(JSONdata &HistoricalData)
 
         std::vector<double> tempEMA;
 
-        for(int i = 0; i < period; i++)
+        for(size_t i = 0; i < period; i++)
                 sum += closePrices[i];
 
         SMA = sum/period;
@@ -130,7 +131,7 @@ void TechnicalAnalysis::calcHundredEMA(JSONdata &HistoricalData)
         setHundEMA(SMA);
         multipler = 2/(period + 1);
 
-        for(int i = period; i <= (closePrices.size() - period); i++) {
+        for(size_t i = period; i <= (closePrices.size() - period); i++) {
                 tempEMA.push_back((closePrices[i]-tempEMA[j])*multipler+tempEMA[j]);
                 j++;
                 setHundEMA(tempEMA[j]);
@@ -142,7 +143,8 @@ void TechnicalAnalysis::calcHundFiftyEMA(JSONdata &HistoricalData)
         assert(!HistoricalData.isEmpty());
 
         double SMA = 0.0, sum = 0.0, multipler = 0.0;
-        int period = 150, j = 0;
+        const size_t period = 150;
+        size_t j = 0;
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
 
@@ -153,7 +155,7 @@ void TechnicalAnalysis::calcHundFiftyEMA(JSONdata &HistoricalData)
 
         std::vector<double> tempEMA;
 
-        for(int i = 0; i < period; i++)
+        for(size_t i = 0; i < period; i++)
                 sum += closePrices[i];
 
         SMA = sum/period;
@@ -161,7 +163,7 @@ void TechnicalAnalysis::calcHundFiftyEMA(JSONdata &HistoricalData)
         setHundFifEMA(SMA);
         multipler = 2/(period + 1);
 
-        for(int i = period; i <= (closePrices.size() - period); i++) {
+        for(size_t i = period; i <= (closePrices.size() - period); i++) {
                 tempEMA.push_back((closePrices[i]-tempEMA[j])*multipler+tempEMA[j]);
                 j++;
                 setHundFifEMA(tempEMA[j]);
@@ -172,7 +174,8 @@ void TechnicalAnalysis::calcTwoHundEMA(JSONdata &HistoricalData)
 {
         assert(!HistoricalData.isEmpty());
         double SMA = 0.0, sum = 0.0, multipler = 0.0;
-        int period = 200, j = 0;
+        const size_t period = 200;
+        size_t j = 0;
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
 
@@ -183,7 +186,7 @@ void TechnicalAnalysis::calcTwoHundEMA(JSONdata &HistoricalData)
 
         std::vector<double> tempEMA;
 
-        for(int i = 0; i < period; i++)
+        for(size_t i = 0; i < period; i++)
                 sum += closePrices[i];
 
         SMA = sum/period;
@@ -191,7 +194,7 @@ void TechnicalAnalysis::calcTwoHundEMA(JSONdata &HistoricalData)
         setTwoHundEMA(SMA);
         multipler = 2/(period + 1);
 
-        for(int i = period; i <= (closePrices.size() - period); i++) {
+        for(size_t i = period; i <= (closePrices.size() - period); i++) {
                 tempEMA.push_back((closePrices[i]-tempEMA[j])*multipler+tempEMA[j]);
                 j++;
                 setTwoHundEMA(tempEMA[j]);
@@ -206,7 +209,7 @@ void TechnicalAnalysis::calcFiftySMA(JSONdata &HistoricalData)
 {
         assert(!HistoricalData.isEmpty());
         double sum;
-        int period = 50;
+        const size_t period = 50;
 
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices,boost::none);
@@ -216,10 +219,10 @@ void TechnicalAnalysis::calcFiftySMA(JSONdata &HistoricalData)
           return;
         }
 
-        for(int i = 0; i <= (closePrices.size() - period); i++) {
+        for(size_t i = 0; i <= (closePrices.size() - period); i++) {
                 sum = 0.0;
 
-                for (int j = i; j < i + period; j++)
+                for (size_t j = i; j < i + period; j++)
                         sum += closePrices[j];
 
                 setFifSMA(sum/period);
@@ -231,7 +234,7 @@ void TechnicalAnalysis::calcHundredSMA(JSONdata &HistoricalData)
 {
         assert(!HistoricalData.isEmpty());
         double sum;
-        int period = 100;
+        const size_t period = 100;
 
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
@@ -241,10 +244,10 @@ void TechnicalAnalysis::calcHundredSMA(JSONdata &HistoricalData)
           return;
         }
 
-        for(int i = 0; i <= (closePrices.size() - period); i++) {
+        for(size_t i = 0; i <= (closePrices.size() - period); i++) {
                 sum = 0.0;
 
-                for (int j = i; j < i + period; j++)
+                for (size_t j = i; j < i + period; j++)
                         sum += closePrices[j];
 
                 setHundSMA(sum/period);
@@ -255,7 +258,7 @@ void TechnicalAnalysis::calcHundFiftySMA(JSONdata &HistoricalData)
 {
         assert(!HistoricalData.isEmpty());
         double sum;
-        int period = 150;
+        const size_t period = 150;
 
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
@@ -265,10 +268,10 @@ void TechnicalAnalysis::calcHundFiftySMA(JSONdata &HistoricalData)
           return;
         }
 
-        for(int i = 0; i <= (closePrices.size() - period); i++) {
+        for(size_t i = 0; i <= (closePrices.size() - period); i++) {
                 sum = 0.0;
 
-                for (int j = i; j < i + period; j++)
+                for (size_t j = i; j < i + period; j++)
                         sum += closePrices[j];
 
                 setHundFifSMA(sum/period);
@@ -279,7 +282,7 @@ void TechnicalAnalysis::calcTwoHundSMA(JSONdata &HistoricalData)
 {
         assert(!HistoricalData.isEmpty());
         double sum;
-        int period = 200;
+        const size_t period = 200;
 
         std::vector<double> closePrices;
         HistoricalData.accessClose(closePrices);
@@ -289,10 +292,10 @@ void TechnicalAnalysis::calcTwoHundSMA(JSONdata &HistoricalData)
           return;
         }
 
-        for(int i = 0; i <= (closePrices.size() - period); i++) {
+        for(size_t i = 0; i <= (closePrices.size() - period); i++) {
                 sum = 0.0;
 
-                for (int j = i; j < i + period; j++)
+                for (size_t j = i; j < i + period; j++)
                         sum += closePrices[j];
 
                 setTwoHundSMA(sum/period);
@@ -307,7 +310,7 @@ void TechnicalAnalysis::calcRSI(JSONdata &HistoricalData)
         assert(!HistoricalData.isEmpty());
 
         auto pushCurrentPeriod = [] (const std::vector<long double> &currPeri, std::vector<long double> &change){
-                                         for(int i = 1; i < currPeri.size(); i++)
+                                         for(size_t i = 1; i < currPeri.size(); i++)
                                                  change.push_back(currPeri[i] - currPeri[i-1]);
                                  };
 
@@ -320,7 +323,6 @@ void TechnicalAnalysis::calcRSI(JSONdata &HistoricalData)
                 std::vector <long double> currentPeriod(closePrices.end()-250,closePrices.end());
                 pushCurrentPeriod(currentPeriod, change);
         }
-
         else{
                 std::vector <long double> currentPeriod(closePrices.begin(),closePrices.end());
                 pushCurrentPeriod(currentPeriod, change);
@@ -328,7 +330,7 @@ void TechnicalAnalysis::calcRSI(JSONdata &HistoricalData)
 
         double sumGain = 0, sumLoss = 0;
 
-        for(int i = 0; i < change.size(); i++) {
+        for(size_t i = 0; i < change.size(); i++) {
                 change[i] > 0 ? gain.push_back(change[i]) : gain.push_back(0);
                 change[i] < 0 ? loss.push_back(abs(change[i])) : loss.push_back(0);
                 sumGain += gain[i];
@@ -338,36 +340,32 @@ void TechnicalAnalysis::calcRSI(JSONdata &HistoricalData)
         avgGain.push_back(sumGain/14);
         avgLoss.push_back(sumLoss/14);
 
-        for(int i = 14, j = 1; i < gain.size(); i++) {
+        for(size_t i = 14, j = 1; i < gain.size(); i++) {
                 avgGain.push_back(((avgGain[j-1] * 13)+ gain[i])/14);
                 avgLoss.push_back(((avgLoss[j-1] * 13)+ loss[i])/14);
                 j++;
         }
 
-        for(int i = 0; i < avgGain.size(); i++) {
+        for(size_t i = 0; i < avgGain.size(); i++) {
                 RS.push_back(avgGain[i]/avgLoss[i]);
                 setRSI(avgLoss[i] == 0 ? 100 : 100 - (100/(1+RS[i])));
         }
         calcStochRSI();
-
-        for(int i : indicators.RSI) {
-                std::cout<<std::endl<<i;
-        }
 }
 
 void TechnicalAnalysis::calcStochRSI()
 {
         assert(!indicators.RSI.empty());
 
-        auto copy = [] (const std::vector<double> &RSI, std::vector<double> &temp, const int &loc){
-                            for(int i = 13; i >= 0; i--)
+        auto copy = [] (const std::vector<double> &RSI, std::vector<double> &temp, const size_t &loc){
+                            for(size_t i = 13; i != static_cast<size_t>(-1); i--)
                                     temp.push_back(RSI[loc-i]);
                     };
 
         std::vector<double> tempVec, tempRSI;
         getRSI(tempRSI);
 
-        for(int i = 13; i <tempRSI.size(); i++) {
+        for(size_t i = 13; i < tempRSI.size(); i++) {
                 copy(tempRSI,tempVec,i);
                 auto lowIt= *std::min_element(tempVec.begin(), tempVec.end());
                 auto highIt= *std::max_element(tempVec.begin(), tempVec.end());
@@ -377,7 +375,7 @@ void TechnicalAnalysis::calcStochRSI()
 }
 /*-------------------- END RSI  --------------------*/
 
-std::vector<double> TechnicalAnalysis::calculateSMA(const std::vector<double>& prices, int period) const {
+std::vector<double> TechnicalAnalysis::calculateSMA(const std::vector<double>& prices, size_t period) const {
     std::vector<double> sma;
     if (prices.size() < period) {
         return sma;
@@ -385,7 +383,7 @@ std::vector<double> TechnicalAnalysis::calculateSMA(const std::vector<double>& p
     
     // Calculate first SMA
     double sum = 0.0;
-    for (int i = 0; i < period; ++i) {
+    for (size_t i = 0; i < period; ++i) {
         sum += prices[i];
     }
     sma.push_back(sum / period);
@@ -533,7 +531,7 @@ void TechnicalAnalysis::calcMACD(JSONdata &HistoricalData) {
     }
 }
 
-std::vector<double> TechnicalAnalysis::calculateEMA(const std::vector<double>& prices, int period) const {
+std::vector<double> TechnicalAnalysis::calculateEMA(const std::vector<double>& prices, size_t period) const {
     std::vector<double> ema;
     if (prices.size() < period) {
         return ema;
@@ -541,7 +539,7 @@ std::vector<double> TechnicalAnalysis::calculateEMA(const std::vector<double>& p
     
     // Calculate first EMA using SMA
     double sum = 0.0;
-    for (int i = 0; i < period; ++i) {
+    for (size_t i = 0; i < period; ++i) {
         sum += prices[i];
     }
     double multiplier = 2.0 / (period + 1);

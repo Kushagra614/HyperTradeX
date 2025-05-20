@@ -119,8 +119,8 @@ void clearTAobj();
 TechnicalAnalysis(const JSONdata& data) : jsonData(data) {}
 
 // Moving Averages
-std::vector<double> calculateSMA(const std::vector<double>& prices, int period) const;
-std::vector<double> calculateEMA(const std::vector<double>& prices, int period) const;
+std::vector<double> calculateSMA(const std::vector<double>& prices, size_t period) const;
+std::vector<double> calculateEMA(const std::vector<double>& prices, size_t period) const;
 
 private:
 const JSONdata& jsonData;

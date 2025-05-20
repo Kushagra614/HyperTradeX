@@ -13,6 +13,12 @@ sys.stderr = open(os.devnull, 'w')
 
 def fetch_stock_data(symbol, period='1mo', interval='1d'):
     try:
+        # Validate period
+        valid_periods = ['1mo', '3mo', '6mo', '1y', '2y', '5y']
+        if period not in valid_periods:
+            print(json.dumps({"error": f"Invalid period. Valid periods are: {', '.join(valid_periods)}"}))
+            return
+
         # Download stock data
         data = yf.download(symbol, period=period, interval=interval, progress=False)
         

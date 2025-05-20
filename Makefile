@@ -1,19 +1,32 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I.
+CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
 LDFLAGS = -lcurl
 
-SRCS = JSONdata.cpp TechnicalAnalysis.cpp Backtester.cpp
-OBJS = $(SRCS:.cpp=.o)
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
-all: test_backtest
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+TARGET = $(BIN_DIR)/test_backtest
 
-test_backtest: test_backtest.cpp $(OBJS)
+all: directories $(TARGET)
+
+directories:
+	@mkdir -p $(OBJ_DIR) $(BIN_DIR)
+
+$(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $<
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) test_backtest
+	rm -f $(OBJS) $(TARGET)
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-.PHONY: all clean 
+clean_reports:
+	rm -rf performance_reports/
+	rm -f performance_*.txt trades_*.csv
+
+.PHONY: all clean clean_reports directories 

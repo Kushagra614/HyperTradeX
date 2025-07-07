@@ -158,18 +158,6 @@ We welcome contributions!
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for more details.
-
----
-
-## 🙌 Acknowledgments
-
-* **Yahoo Finance** for market data
-* All contributors who helped improve the project
-
----
 
 ⭐️ **If you found this project useful, consider giving it a star on GitHub!**
 

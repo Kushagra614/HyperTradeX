@@ -162,31 +162,19 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Running backtest for " << symbol << " over " << period << " period\n";
 
-        // Fetch data using Python script with the user-provided symbol and period
-        std::string command = "python3 src/fetch_yahoo.py \"" + symbol + "\" \"" + period + "\" 1d";
-        std::array<char, 128> buffer;
-        std::string result;
-        std::unique_ptr<FILE, int(*)(FILE*)> pipe(popen(command.c_str(), "r"), pclose);
-        
-        if (!pipe) {
-            throw std::runtime_error("Failed to execute Python script");
-        }
+        // Load data from pre-downloaded JSON file
+        std::string filename = "data/" + symbol + "_" + period + ".json";
+        std::cout << "Loading data from: " << filename << std::endl;
 
-        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-            result += buffer.data();
-        }
-
-        // Find the JSON part of the output
-        size_t start = result.find('{');
-        size_t end = result.rfind('}');
-        if (start == std::string::npos || end == std::string::npos) {
-            throw std::runtime_error("Invalid JSON output from Python script");
-        }
-        std::string jsonData = result.substr(start, end - start + 1);
-
-        // Parse data
         JSONdata data;
-        data.parseYahooData(jsonData);
+        if (!data.loadFromFile(filename)) {
+            std::cerr << "Error: Could not load data file " << filename << std::endl;
+            std::cerr << "Please ensure the file exists. You can create it by running:" << std::endl;
+            std::cerr << "python3 src/fetch_yahoo.py " << symbol << " " << period << " 1d > " << filename << std::endl;
+            return 1;
+        }
+
+        std::cout << "Data loaded successfully!" << std::endl;
 
         // Initialize technical analysis
         TechnicalAnalysis ta(data);

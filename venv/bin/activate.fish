@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV '/mnt/d/ME/WORK/Codeverse/Coding/C++/Projects C++/AlgoTradingBot/venv'
+set -gx VIRTUAL_ENV /home/kushagra-vardhan/Kush/Work/Codeverse/Coding/AlgoTradingBot/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

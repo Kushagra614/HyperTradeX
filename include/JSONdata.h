@@ -93,6 +93,7 @@ void getUnAdjVol(std::vector<long long> &) const;
 bool isEmpty() const;
 void clearJSONstruct();
 void parseYahooData(const std::string& jsonStr);
+bool loadFromFile(const std::string& filename);
 
 const std::vector<std::string>& getDates() const { return pricingData.date; }
 const std::vector<double>& getClose() const { return pricingData.close; }

@@ -1,5 +1,7 @@
 #include "JSONdata.h"
 #include <nlohmann/json.hpp>
+#include <fstream>
+#include <iostream>
 
 std::mutex _mtx; //For std::lock_guard
 
@@ -399,5 +401,35 @@ void JSONdata::parseYahooData(const std::string& jsonStr) {
     } catch (const std::exception& e) {
         std::cerr << "Error processing Yahoo Finance data: " << e.what() << std::endl;
         throw;
+    }
+}
+
+bool JSONdata::loadFromFile(const std::string& filename) {
+    try {
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            std::cerr << "Error: Could not open file " << filename << std::endl;
+            return false;
+        }
+
+        std::string jsonContent;
+        std::string line;
+        while (std::getline(file, line)) {
+            jsonContent += line;
+        }
+        file.close();
+
+        if (jsonContent.empty()) {
+            std::cerr << "Error: File " << filename << " is empty" << std::endl;
+            return false;
+        }
+
+        // Parse the JSON content using existing method
+        parseYahooData(jsonContent);
+        return true;
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading file " << filename << ": " << e.what() << std::endl;
+        return false;
     }
 }

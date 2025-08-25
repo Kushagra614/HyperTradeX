@@ -110,6 +110,14 @@ The data will be saved in the `data/` directory. After fetching the data, you ca
 
 ### 🧾 Examples
 
+First, fetch the historical data:
+```bash
+python3 src/fetch_yahoo.py AAPL 1y    # Fetch 1 year of Apple stock data
+python3 src/fetch_yahoo.py GOOGL 3y   # Fetch 3 years of Google stock data
+python3 src/fetch_yahoo.py MSFT 2y    # Fetch 2 years of Microsoft stock data
+```
+
+Then run the backtests:
 ```bash
 ./bin/test_backtest AAPL 1y      # Backtest Apple stock for 1 year
 ./bin/test_backtest GOOGL 3y     # Backtest Google stock for 3 years

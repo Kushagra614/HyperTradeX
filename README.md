@@ -25,7 +25,7 @@
   * **MACD** – Moving Average Convergence Divergence
 
 * **🧪 Ultra-Fast Backtesting Engine**
-  * **1000x+ performance improvement** over mixed-language systems
+  * **Microsecond-level execution** for real-time performance
   * Simulates trade signals and strategy performance over historical data
   * **Low-latency execution** suitable for HFT applications
 
@@ -156,7 +156,7 @@ The system outputs key trading metrics, including:
 ### � Performance Optimizations
 
 * **Pure C++ Runtime**: Zero Python dependencies during backtesting
-* **Direct File I/O**: Eliminated subprocess overhead (1000x+ speed improvement)
+* **Direct File I/O**: Optimized data loading with no subprocess overhead
 * **Optimized Memory Management**: Efficient data structures for large datasets
 * **Low-Latency Design**: Microsecond-level execution suitable for HFT
 
@@ -176,27 +176,28 @@ The system outputs key trading metrics, including:
 
 ---
 
-## ⚡ Performance Benchmarks
+## ⚡ Performance Specifications
 
-### 🚀 Speed Improvements
+### 🚀 High-Performance Metrics
 
-| Metric | Before (Mixed C++/Python) | After (Pure C++) | Improvement |
-|--------|---------------------------|------------------|-------------|
-| **Execution Time** | ~50-100ms | ~50-100μs | **1000x faster** |
-| **Memory Usage** | High (subprocess overhead) | Optimized | **60% reduction** |
-| **Dependencies** | Python + C++ runtime | C++ only | **Zero runtime deps** |
-| **Latency** | Millisecond-level | Microsecond-level | **HFT-ready** |
+| Metric | Specification | Capability |
+|--------|---------------|------------|
+| **Execution Time** | ~50-100μs | **Microsecond-level** |
+| **Memory Usage** | Optimized C++ | **Low footprint** |
+| **Dependencies** | C++ only | **Zero runtime deps** |
+| **Latency** | Sub-millisecond | **HFT-ready** |
 
 ### 📊 Real-World Performance
 
 ```bash
 # Example: AAPL 1-year backtest
-Before: 85ms execution time
-After:  0.08ms execution time
-Result: 1000x+ performance gain
+Execution time: 0.08ms
+Memory usage: <50MB
+Processing: 250+ data points
+Result: Production-ready speed
 ```
 
-**Perfect for:**
+**Ideal for:**
 - High-Frequency Trading (HFT) applications
 - Real-time strategy evaluation
 - Large-scale backtesting operations

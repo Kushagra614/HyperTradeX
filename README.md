@@ -124,11 +124,29 @@ Then run the backtests:
 ./bin/test_backtest MSFT 2y      # Backtest Microsoft stock for 2 years
 ```
 
-### 📊 Alternative: Using the atb alias (if configured)
+### 🛠️ Common Commands Reference
 
 ```bash
-atb AAPL 1y      # Backtest Apple stock for 1 year
-atb GOOGL 3y     # Backtest Google stock for 3 years
+# Data Fetching
+python3 src/fetch_yahoo.py AAPL 1y          # Fetch Apple stock data for 1 year
+python3 src/fetch_yahoo.py GOOGL 3y         # Fetch Google stock data for 3 years
+
+# Building
+make clean                                  # Clean all built files
+make                                        # Build the project
+make clean && make                          # Rebuild everything
+
+# Backtesting
+./bin/test_backtest AAPL 1y                # Run backtest on Apple stock for 1 year
+./bin/test_backtest GOOGL 3y               # Run backtest on Google stock for 3 years
+
+# Cleaning Reports
+rm -rf performance_reports/                 # Remove entire performance_reports directory
+mkdir performance_reports/                  # Recreate empty performance_reports directory
+
+# Alternative Using atb alias (if configured)
+atb AAPL 1y                                # Backtest Apple stock for 1 year
+atb GOOGL 3y                               # Backtest Google stock for 3 years
 ```
 
 ### 📆 Supported Periods

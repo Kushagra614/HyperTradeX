@@ -14,3 +14,6 @@ alias atbenv-deact='deactivate'               # Deactivate Python env
 # yfetch AAPL 1y    (instead of python3 src/fetch_yahoo.py AAPL 1y)
 # atbuild           (instead of make clean && make)
 # atclean           (instead of rm -rf performance_reports/ && mkdir performance_reports/)
+
+# cat aliases.sh >> ~/.bashrc   --> cmd for adding aliases file to bashrc
+# source ~/.bashrc  --> reload your bashrc

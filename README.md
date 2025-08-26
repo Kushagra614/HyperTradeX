@@ -117,6 +117,27 @@ python3 src/fetch_yahoo.py GOOGL 3y   # Fetch 3 years of Google stock data
 python3 src/fetch_yahoo.py MSFT 2y    # Fetch 2 years of Microsoft stock data
 ```
 
+### 📊 Strategy Selection Guide
+
+When running backtests, you can choose from different trading strategies by adding a number (1-5) after the symbol and period:
+
+```bash
+atb AAPL 1y 1    # Strategy 1: SMA Crossover - Uses moving average crossovers (10/20 day) for trend following
+atb AAPL 1y 2    # Strategy 2: RSI Reversal - Uses RSI for identifying overbought/oversold conditions
+atb AAPL 1y 3    # Strategy 3: MACD Trend - Uses MACD for trend direction and momentum
+atb AAPL 1y 4    # Strategy 4: Combined - Uses all three strategies together for conservative trading
+atb AAPL 1y 5    # Strategy 5: Best Performer - Runs all strategies and selects the best one
+```
+
+Strategy Details:
+1. **SMA Crossover (1)**: Simple but effective trend-following strategy using 10-day and 20-day moving averages
+2. **RSI Reversal (2)**: Mean reversion strategy using RSI indicator, buys oversold (RSI < 30) and sells overbought (RSI > 70)
+3. **MACD Trend (3)**: Trend and momentum strategy using MACD crossovers for entry and exit signals
+4. **Combined (4)**: Conservative approach requiring all three indicators to align for trade signals
+5. **Best Performer (5)**: Automatically tests all strategies and picks the one with the best risk-adjusted returns
+
+If no strategy number is provided, it defaults to Best Performer mode (5).
+
 Then run the backtests:
 ```bash
 ./bin/test_backtest AAPL 1y      # Backtest Apple stock for 1 year

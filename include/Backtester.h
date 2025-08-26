@@ -37,6 +37,10 @@ struct PerformanceMetrics {
     int losingTrades;           // Number of losing trades
 };
 
+// Strategy enum moved to Strategy.h
+
+#include "Strategy.h"
+
 class Backtester {
 protected:
     JSONdata& historicalData;
@@ -46,6 +50,7 @@ protected:
     double initialCapital;
     double currentCapital;
     double positionSize;  // Fixed position size for each trade
+    StrategyType activeStrategy;
     
     // Helper functions
     void calculateMetrics();

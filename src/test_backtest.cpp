@@ -1,6 +1,7 @@
 #include "../include/Backtester.h"
 #include "../include/JSONdata.h"
 #include "../include/TechnicalAnalysis.h"
+#include "../include/Strategy.h"
 #include <iostream>
 #include <memory>
 #include <fstream>
@@ -13,13 +14,14 @@
 // DEBUG VERSION: Prints indicator values and uses only MA crossover for entries
 class EnhancedStrategy : public Backtester {
 public:
-    EnhancedStrategy(JSONdata& data, TechnicalAnalysis& ta, double initialCap, double posSize)
+    EnhancedStrategy(JSONdata& data, TechnicalAnalysis& ta, double initialCap, double posSize, StrategyType type = StrategyType::COMBINED)
         : Backtester(data, ta, initialCap, posSize)
         , shortPeriod(10)
         , longPeriod(20)
         , rsiPeriod(14)
         , rsiOverbought(70)
         , rsiOversold(30)
+        , strategyType(type)
     {}
 
     void setParameters(int shortP, int longP, int rsiP, double rsiOver, double rsiUnder) {
@@ -31,78 +33,34 @@ public:
     }
 
     void runStrategy() override {
-        // Get price data
+        if (strategyType == StrategyType::BEST_PERFORMER) {
+            runAllStrategies();
+            return;
+        }
+
+        // Get price data (for validation only)
         const auto& dates = historicalData.getDates();
-        const auto& closes = historicalData.getClose();
-        
+        (void)dates; // Suppress unused variable warning
+
         if (dates.size() < static_cast<size_t>(longPeriod)) {
             throw std::runtime_error("Not enough data points for strategy");
         }
 
-        // Calculate indicators
-        std::vector<double> shortMA = technicalAnalysis.calculateSMA(closes, shortPeriod);
-        std::vector<double> longMA = technicalAnalysis.calculateSMA(closes, longPeriod);
-        
-        // Calculate RSI
-        technicalAnalysis.calcRSI(historicalData);
-        std::vector<double> rsi;
-        technicalAnalysis.getRSI(rsi);
-        
-        // Calculate MACD
-        technicalAnalysis.calcMACD(historicalData);
-        std::vector<double> macd, signal;
-        technicalAnalysis.getMACD(macd);
-        technicalAnalysis.getSignal(signal);
-
-        // Print indicator sizes for debugging
-        std::cout << "shortMA size: " << shortMA.size() << ", longMA size: " << longMA.size()
-                  << ", rsi size: " << rsi.size() << ", macd size: " << macd.size()
-                  << ", signal size: " << signal.size() << std::endl;
-
-        bool inPosition = false;
-        bool isLong = false;
-
-        // Run strategy
-        int validDays = 0;
-        for (size_t i = longPeriod; i < dates.size(); ++i) {
-            if (std::isnan(shortMA[i]) || std::isnan(longMA[i])) {
-                continue;
-            }
-            validDays++;
-
-            // Check for crossover
-            bool crossUp = shortMA[i] > longMA[i] && shortMA[i-1] <= longMA[i-1];
-            bool crossDown = shortMA[i] < longMA[i] && shortMA[i-1] >= longMA[i-1];
-
-            // Close existing position if there's a crossover or filter conditions are met
-            if (inPosition) {
-                if (isLong && (crossDown /*|| rsiOverboughtCondition || macdBearish*/)) {
-                    closeTrade(dates[i], closes[i]);
-                    inPosition = false;
-                } else if (!isLong && (crossUp /*|| rsiOversoldCondition || macdBullish*/)) {
-                    closeTrade(dates[i], closes[i]);
-                    inPosition = false;
-                }
-            }
-
-            // Open new position if all conditions align (loosened: just MA crossover)
-            if (!inPosition) {
-                if (crossUp /*&& rsiOversoldCondition && macdBullish*/) {
-                    executeTrade(dates[i], closes[i], true);  // Long position
-                    inPosition = true;
-                    isLong = true;
-                } else if (crossDown /*&& rsiOverboughtCondition && macdBearish*/) {
-                    executeTrade(dates[i], closes[i], false); // Short position
-                    inPosition = true;
-                    isLong = false;
-                }
-            }
-        }
-        std::cout << "\nValid days processed: " << validDays << std::endl;
-
-        // Close any open position at the end
-        if (inPosition) {
-            closeTrade(dates.back(), closes.back());
+        switch(strategyType) {
+            case StrategyType::SMA_CROSSOVER:
+                runSMAStrategy();
+                break;
+            case StrategyType::RSI_REVERSAL:
+                runRSIStrategy();
+                break;
+            case StrategyType::MACD_TREND:
+                runMACDStrategy();
+                break;
+            case StrategyType::COMBINED:
+                runCombinedStrategy();
+                break;
+            default:
+                throw std::runtime_error("Invalid strategy type");
         }
 
         // Calculate performance metrics
@@ -115,6 +73,231 @@ private:
     int rsiPeriod;
     double rsiOverbought;
     double rsiOversold;
+    StrategyType strategyType;
+
+    // Individual strategy implementations
+    void runSMAStrategy() {
+        const auto& dates = historicalData.getDates();
+        const auto& closes = historicalData.getClose();
+        
+        std::vector<double> shortMA = technicalAnalysis.calculateSMA(closes, shortPeriod);
+        std::vector<double> longMA = technicalAnalysis.calculateSMA(closes, longPeriod);
+        
+        bool inPosition = false;
+        
+        for (size_t i = longPeriod; i < dates.size(); ++i) {
+            // SMA Crossover logic
+            bool bullishCross = shortMA[i-1] <= longMA[i-1] && shortMA[i] > longMA[i];
+            bool bearishCross = shortMA[i-1] >= longMA[i-1] && shortMA[i] < longMA[i];
+            
+            if (!inPosition && bullishCross) {
+                executeTrade(dates[i], closes[i], true);
+                inPosition = true;
+            }
+            else if (inPosition && bearishCross) {
+                closeTrade(dates[i], closes[i]);
+                inPosition = false;
+            }
+        }
+        if (inPosition) {
+            closeTrade(dates.back(), closes.back());
+        }
+    }
+
+    void runRSIStrategy() {
+        const auto& dates = historicalData.getDates();
+        const auto& closes = historicalData.getClose();
+        
+        technicalAnalysis.calcRSI(historicalData);
+        std::vector<double> rsi;
+        technicalAnalysis.getRSI(rsi);
+        
+        bool inPosition = false;
+        
+        for (size_t i = rsiPeriod; i < dates.size(); ++i) {
+            // RSI mean reversion logic
+            bool oversold = rsi[i] < rsiOversold;
+            bool overbought = rsi[i] > rsiOverbought;
+            
+            if (!inPosition && oversold) {
+                executeTrade(dates[i], closes[i], true);
+                inPosition = true;
+            }
+            else if (inPosition && overbought) {
+                closeTrade(dates[i], closes[i]);
+                inPosition = false;
+            }
+        }
+        if (inPosition) {
+            closeTrade(dates.back(), closes.back());
+        }
+    }
+
+    void runMACDStrategy() {
+        const auto& dates = historicalData.getDates();
+        const auto& closes = historicalData.getClose();
+        
+        technicalAnalysis.calcMACD(historicalData);
+        std::vector<double> macd, signal;
+        technicalAnalysis.getMACD(macd);
+        technicalAnalysis.getSignal(signal);
+        
+        bool inPosition = false;
+        
+        for (size_t i = 26; i < dates.size(); ++i) {  // MACD uses 26 periods
+            // MACD Trend following logic
+            bool bullishCross = macd[i-1] <= signal[i-1] && macd[i] > signal[i];
+            bool bearishCross = macd[i-1] >= signal[i-1] && macd[i] < signal[i];
+            
+            if (!inPosition && bullishCross) {
+                executeTrade(dates[i], closes[i], true);
+                inPosition = true;
+            }
+            else if (inPosition && bearishCross) {
+                closeTrade(dates[i], closes[i]);
+                inPosition = false;
+            }
+        }
+        if (inPosition) {
+            closeTrade(dates.back(), closes.back());
+        }
+    }
+
+    void runCombinedStrategy() {
+        const auto& dates = historicalData.getDates();
+        const auto& closes = historicalData.getClose();
+        
+        // Calculate all indicators
+        std::vector<double> shortMA = technicalAnalysis.calculateSMA(closes, shortPeriod);
+        std::vector<double> longMA = technicalAnalysis.calculateSMA(closes, longPeriod);
+        
+        technicalAnalysis.calcRSI(historicalData);
+        std::vector<double> rsi;
+        technicalAnalysis.getRSI(rsi);
+        
+        technicalAnalysis.calcMACD(historicalData);
+        std::vector<double> macd, signal;
+        technicalAnalysis.getMACD(macd);
+        technicalAnalysis.getSignal(signal);
+        
+        bool inPosition = false;
+        
+        for (size_t i = std::max(longPeriod, 26); i < dates.size(); ++i) {
+            // Combined strategy logic
+            bool smaBullish = shortMA[i-1] <= longMA[i-1] && shortMA[i] > longMA[i];
+            bool smaBearish = shortMA[i-1] >= longMA[i-1] && shortMA[i] < longMA[i];
+            
+            bool rsiBullish = rsi[i] < rsiOversold;
+            bool rsiBearish = rsi[i] > rsiOverbought;
+            
+            bool macdBullish = macd[i-1] <= signal[i-1] && macd[i] > signal[i];
+            bool macdBearish = macd[i-1] >= signal[i-1] && macd[i] < signal[i];
+            
+            if (!inPosition && (smaBullish && rsiBullish && macdBullish)) {
+                executeTrade(dates[i], closes[i], true);
+                inPosition = true;
+            }
+            else if (inPosition && (smaBearish && rsiBearish && macdBearish)) {
+                closeTrade(dates[i], closes[i]);
+                inPosition = false;
+            }
+        }
+        if (inPosition) {
+            closeTrade(dates.back(), closes.back());
+        }
+    }
+
+    void runAllStrategies() {
+        // Store original state (for potential restoration if needed)
+        auto originalTrades = trades;
+        (void)originalTrades; // Suppress unused variable warning
+        
+        std::vector<StrategyResult> results;
+        
+        // Run each strategy and store results
+        std::vector<StrategyType> strategies = {
+            StrategyType::SMA_CROSSOVER,
+            StrategyType::RSI_REVERSAL,
+            StrategyType::MACD_TREND,
+            StrategyType::COMBINED
+        };
+        
+        for (auto strat : strategies) {
+            trades.clear();
+            strategyType = strat;
+            
+            switch(strat) {
+                case StrategyType::SMA_CROSSOVER: runSMAStrategy(); break;
+                case StrategyType::RSI_REVERSAL: runRSIStrategy(); break;
+                case StrategyType::MACD_TREND: runMACDStrategy(); break;
+                case StrategyType::COMBINED: runCombinedStrategy(); break;
+                default: continue;
+            }
+            
+            calculateMetrics();
+            
+            results.push_back({
+                strat,
+                metrics.totalReturn,
+                metrics.sharpeRatio,
+                metrics.totalTrades,
+                metrics.winRate
+            });
+        }
+        
+        // Find best strategy based on Sharpe ratio
+        auto bestStrategy = *std::max_element(results.begin(), results.end(),
+            [](const StrategyResult& a, const StrategyResult& b) {
+                return a.sharpeRatio < b.sharpeRatio;
+            });
+        
+        // Print comparison table
+        std::cout << "\n=== Strategy Comparison ===\n";
+        std::cout << std::setw(15) << "Strategy" 
+                  << std::setw(15) << "Return (%)" 
+                  << std::setw(15) << "Sharpe"
+                  << std::setw(15) << "# Trades"
+                  << std::setw(15) << "Win Rate (%)\n";
+        std::cout << std::string(75, '-') << "\n";
+        
+        for (const auto& result : results) {
+            std::string stratName;
+            switch(result.type) {
+                case StrategyType::SMA_CROSSOVER: stratName = "SMA"; break;
+                case StrategyType::RSI_REVERSAL: stratName = "RSI"; break;
+                case StrategyType::MACD_TREND: stratName = "MACD"; break;
+                case StrategyType::COMBINED: stratName = "Combined"; break;
+                default: stratName = "Unknown"; break;
+            }
+            
+            std::cout << std::setw(15) << stratName
+                      << std::setw(15) << std::fixed << std::setprecision(2) << result.totalReturn
+                      << std::setw(15) << std::fixed << std::setprecision(2) << result.sharpeRatio
+                      << std::setw(15) << result.totalTrades
+                      << std::setw(15) << std::fixed << std::setprecision(2) << result.winRate << "\n";
+        }
+        
+        std::cout << "\nBest Strategy: ";
+        switch(bestStrategy.type) {
+            case StrategyType::SMA_CROSSOVER: std::cout << "SMA Crossover"; break;
+            case StrategyType::RSI_REVERSAL: std::cout << "RSI Reversal"; break;
+            case StrategyType::MACD_TREND: std::cout << "MACD Trend"; break;
+            case StrategyType::COMBINED: std::cout << "Combined"; break;
+            default: std::cout << "Unknown"; break;
+        }
+        std::cout << " (Sharpe: " << std::fixed << std::setprecision(2) << bestStrategy.sharpeRatio << ")\n\n";
+        
+        // Run best strategy again to update final metrics
+        trades.clear();
+        strategyType = bestStrategy.type;
+        switch(bestStrategy.type) {
+            case StrategyType::SMA_CROSSOVER: runSMAStrategy(); break;
+            case StrategyType::RSI_REVERSAL: runRSIStrategy(); break;
+            case StrategyType::MACD_TREND: runMACDStrategy(); break;
+            case StrategyType::COMBINED: runCombinedStrategy(); break;
+            default: break;
+        }
+    }
 };
 
 int main(int argc, char* argv[]) {
@@ -176,11 +359,47 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Data loaded successfully!" << std::endl;
 
+        // Display data range information
+        const auto& dates = data.getDates();
+        if (!dates.empty()) {
+            std::cout << "📅 Data Range: " << dates.front() << " to " << dates.back()
+                      << " (" << dates.size() << " trading days)" << std::endl;
+        }
+
         // Initialize technical analysis
         TechnicalAnalysis ta(data);
 
+        // Strategy selection
+        StrategyType selectedStrategy = StrategyType::COMBINED;  // Default
+
+        std::cout << "\nSelect trading strategy:\n";
+        std::cout << "1. SMA Crossover (Simple Moving Average)\n";
+        std::cout << "2. RSI Reversal (Mean Reversion)\n";
+        std::cout << "3. MACD Trend Following\n";
+        std::cout << "4. Combined Strategy (All indicators)\n";
+        std::cout << "5. Best Performer (Test all and pick best)\n";
+        std::cout << "Enter choice (1-5, default: 4): ";
+
+        std::string choice;
+        std::getline(std::cin, choice);
+
+        if (!choice.empty()) {
+            int stratChoice = std::stoi(choice);
+            switch(stratChoice) {
+                case 1: selectedStrategy = StrategyType::SMA_CROSSOVER; break;
+                case 2: selectedStrategy = StrategyType::RSI_REVERSAL; break;
+                case 3: selectedStrategy = StrategyType::MACD_TREND; break;
+                case 4: selectedStrategy = StrategyType::COMBINED; break;
+                case 5: selectedStrategy = StrategyType::BEST_PERFORMER; break;
+                default:
+                    std::cout << "Invalid choice, using Combined Strategy\n";
+                    selectedStrategy = StrategyType::COMBINED;
+                    break;
+            }
+        }
+
         // Create and run enhanced strategy
-        EnhancedStrategy strategy(data, ta, 10000.0, 0.1);  // $10,000 initial capital, 10% position size
+        EnhancedStrategy strategy(data, ta, 10000.0, 0.1, selectedStrategy);  // $10,000 initial capital, 10% position size
         strategy.setParameters(10, 20, 14, 70, 30);  // MA periods, RSI period, RSI levels
         strategy.runStrategy();
 
@@ -190,9 +409,9 @@ int main(int argc, char* argv[]) {
 
         // Prompt user to save report and trades
         std::cout << "\nDo you want to save the performance report and trades to files? (y/n): ";
-        char choice;
-        std::cin >> choice;
-        if (choice == 'y' || choice == 'Y') {
+        std::string exportChoice;
+        std::getline(std::cin, exportChoice);
+        if (exportChoice == "y" || exportChoice == "Y") {
             // Create performance_reports directory if it doesn't exist
             std::filesystem::create_directories("performance_reports");
             

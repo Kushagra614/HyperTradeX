@@ -29,6 +29,9 @@ class TechnicalAnalysis
 
 public:
 
+void getSignal(std::vector<double>& copy) const;
+void getMACD(std::vector<double>& copy) const;
+
 void accessSignal(boost::optional<std::vector<double>&> copy = boost::none,
                 boost::optional<double> temp = boost::none);
 
@@ -65,8 +68,7 @@ void accessHundFifEMA(boost::optional<std::vector<double>&> EMPTY_VEC = boost::n
 void accessTwoHundEMA(boost::optional<std::vector<double>&> EMPTY_VEC = boost::none,
                       boost::optional<double> temp = boost::none);
 
-void getMACD(std::vector<double> &) const;
-void getSignal(std::vector<double> &) const;
+// Note: const versions are already declared above
 
 
 void getRSI(std::vector<double> &) const;

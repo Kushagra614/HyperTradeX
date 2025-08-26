@@ -51,8 +51,21 @@ def fetch_stock_data(symbol, period='1mo', interval='1d'):
             "data": result
         }
         
-        # Print only the JSON data to stdout
-        print(json.dumps(output), flush=True)
+        # Ensure data directory exists
+        data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+        os.makedirs(data_dir, exist_ok=True)
+        
+        # Save to file in data directory
+        filename = os.path.join(data_dir, f"{symbol}_{period}.json")
+        with open(filename, 'w') as f:
+            json.dump(output, f, indent=2)
+
+        # Restore stderr to print save message there
+        sys.stderr = stderr
+        print(f"Data saved to {filename}", file=sys.stderr, flush=True)
+
+        # Output JSON to stdout for piping
+        print(json.dumps(output, indent=2), flush=True)
         
     except Exception as e:
         # Restore stderr before printing error

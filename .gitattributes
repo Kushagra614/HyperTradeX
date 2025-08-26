@@ -1,0 +1,30 @@
+# Force GitHub to recognize this as a C++ project
+*.cpp linguist-language=C++
+*.h linguist-language=C++
+*.hpp linguist-language=C++
+
+# Exclude files from language statistics
+venv/** linguist-vendored
+.vscode/** linguist-vendored
+data/** linguist-vendored
+*.json linguist-vendored
+docs/** linguist-documentation
+
+# Mark Python files as supporting scripts, not main language
+*.py linguist-language=Python
+src/fetch_yahoo.py linguist-vendored=false
+scripts/*.py linguist-vendored=false
+
+# Ensure C++ files are properly detected
+src/*.cpp linguist-detectable=true
+include/*.h linguist-detectable=true
+
+# Mark build artifacts as generated
+bin/** linguist-generated
+*.o linguist-generated
+*.exe linguist-generated
+
+# Documentation files
+*.md linguist-documentation
+*.html linguist-documentation
+*.txt linguist-documentation

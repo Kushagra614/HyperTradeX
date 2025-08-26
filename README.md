@@ -99,7 +99,7 @@
 Use the provided Python script to download the required data:
 
 ```bash
-python3 src/fetch_yahoo.py [SYMBOL] [PERIOD]  # e.g., python3 src/fetch_yahoo.py AAPL 1y
+python3 src/fetch_yahoo.py [SYMBOL] [PERIOD] 
 ```
 
 The data will be saved in the `data/` directory. After fetching the data, you can run backtests directly with the compiled binary:

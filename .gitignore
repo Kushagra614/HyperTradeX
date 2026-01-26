@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+cmake-build-debug/
+cmake-build-release/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+hypertradex
+hypertradex.exe
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies & Documentation
+*.docs

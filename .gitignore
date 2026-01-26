@@ -31,5 +31,5 @@ Makefile
 .DS_Store
 Thumbs.db
 
-# Dependencies & Documentation
-*.docs
+# Dependencies
+# (keep .md files for documentation - they're good to track!)

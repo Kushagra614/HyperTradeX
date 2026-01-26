@@ -17,10 +17,10 @@ set(SOURCES
     src/main.cpp
     src/data_loader.cpp
     src/parser.cpp
-    src/replay_engine.cpp
-    src/strategy.cpp
-    src/execution.cpp
-    src/metrics.cpp
+    # src/replay_engine.cpp
+    # src/strategy.cpp
+    # src/execution.cpp
+    # src/metrics.cpp
 )
 
 # Create Executable

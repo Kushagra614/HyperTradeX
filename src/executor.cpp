@@ -1,9 +1,12 @@
 #include "executor.h"
+#include <chrono>
 using namespace std;
 
 
 Executor::Executor(uint64_t initial_capital)
     : entry_time_ms_(0),
+      entry_latency_us_(0),
+      exit_latency_us_(0),
       quantity_(0),
       next_trade_id_(0),
       initial_price_(static_cast<double>(initial_capital)),
@@ -22,23 +25,31 @@ optional<Trade> Executor::on_kline(const Kline& kline, const Strategy::Decision&
     
     // BUYING: Enter a position
     if (decision.is_buy) {
+        auto start = chrono::high_resolution_clock::now();
         entry_price_ = kline.close;
         entry_time_ms_ = kline.timestamp_ms;
         quantity_ = decision.quantity;
         has_position_ = true;
+        auto end = chrono::high_resolution_clock::now();
+        entry_latency_us_ = chrono::duration_cast<chrono::microseconds>(end - start).count();
         return nullopt;  // Trade not complete yet
     }
     
     // SELLING: Close the position
+    auto start = chrono::high_resolution_clock::now();
     double exit_price = kline.close;
     uint64_t exit_time = kline.timestamp_ms;
     double pnl = (exit_price - entry_price_) * static_cast<double>(quantity_);
+    auto end = chrono::high_resolution_clock::now();
+    exit_latency_us_ = chrono::duration_cast<chrono::microseconds>(end - start).count();
     
     // Create completed Trade
     Trade completed_trade = {
         next_trade_id_,                      // trade_id
         entry_time_ms_,                      // entry_time_ms
         exit_time,                           // exit_time_ms
+        entry_latency_us_,                   // entry_latency_us
+        exit_latency_us_,                    // exit_latency_us
         entry_price_,                        // entry_price
         exit_price,                          // exit_price
         static_cast<double>(quantity_),      // quantity (cast to double)

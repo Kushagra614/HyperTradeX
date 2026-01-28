@@ -14,6 +14,8 @@ class Executor{
 
     private:
     uint64_t entry_time_ms_;
+    uint64_t entry_latency_us_;
+    uint64_t exit_latency_us_;
     uint64_t quantity_;
     uint64_t next_trade_id_;
     double initial_capital_;

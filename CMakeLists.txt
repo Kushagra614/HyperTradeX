@@ -19,8 +19,8 @@ set(SOURCES
     src/parser.cpp
     src/replay_engine.cpp
     src/strategy.cpp
-    # src/execution.cpp
-    # src/metrics.cpp
+    src/executor.cpp
+    src/metrics.cpp
 )
 
 # Create Executable

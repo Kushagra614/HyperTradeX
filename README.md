@@ -1,16 +1,16 @@
-# HyperTradeX - Backtesting Engine
+# HyperTradeX
 
-A modern C++17 cryptocurrency backtesting system for learning systems engineering and building trading infrastructure.
+A high-performance cryptocurrency backtesting engine built with pure C++17 for ultra-low latency execution. HyperTradeX delivers microsecond-level performance with real Binance market data integration, enabling realistic strategy validation and performance analysis for algorithmic trading systems.
 
 ## 📋 Overview
 
-HyperTradeX demonstrates practical concepts:
-- **Data pipeline** - Load, parse, and replay market data
-- **Trading strategy** - Buy/sell logic with state management
-- **Execution simulator** - Realistic order fills and PnL calculation
-- **Performance metrics** - Win rate, drawdown, latency tracking
-- **REST API integration** - Real Binance market data
-- **Modern C++** - C++17, efficient memory usage, RAII patterns
+HyperTradeX combines production-grade infrastructure with educational value:
+- **Ultra-low latency** - Microsecond execution timing with performance metrics
+- **Real market data** - Live Binance REST API integration
+- **Deterministic playback** - Exact reproducibility across backtests
+- **Advanced metrics** - PnL, win rate, drawdown, P99 latency percentiles
+- **Systems engineering** - Learn data pipelines, state machines, API integration
+- **Modern C++17** - Efficient memory design, RAII patterns, optimal performance
 
 ## 🎯 Features
 

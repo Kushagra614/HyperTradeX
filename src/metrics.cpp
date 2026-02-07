@@ -11,7 +11,7 @@ Statistics Metrics::calculate(const vector<Trade>& trades)
 {
     // Handle empty trades case
     if (trades.empty()) {
-        return Statistics{0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        return Statistics{0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     }
 
     uint64_t total_trades = trades.size();
@@ -65,7 +65,14 @@ Statistics Metrics::calculate(const vector<Trade>& trades)
     sort(all_latencies.begin(), all_latencies.end());
     int p99_index = static_cast<int>(0.99 * all_latencies.size());
     double p99_latency = all_latencies[p99_index];
+
+    //Calculate P50 latency
+    sort(all_latencies.begin(), all_latencies.end());
+    int p50_index = static_cast<int>(0.50 * all_latencies.size());
+    double p50_latency = all_latencies[p50_index];
     
+    
+
     // Return statistics
     return Statistics{
         total_trades,
@@ -77,7 +84,8 @@ Statistics Metrics::calculate(const vector<Trade>& trades)
         largest_loss,
         avg_entry_latency,
         avg_exit_latency,
-        p99_latency
+        p99_latency,
+        p50_latency
     };
 }
 

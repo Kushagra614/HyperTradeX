@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(HyperTradeX)
 
+find_package(CURL REQUIRED) // finds the libcurl lib
+target_link_libraries(hypertradex PUBLIC ${CURL_LIBRARIES})
+target_include_directories(hypertradex PUBLIC ${CURL_INCLUDE_DIRS})
+
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,6 +25,7 @@ set(SOURCES
     src/strategy.cpp
     src/executor.cpp
     src/metrics.cpp
+    src/binance_client.cpp
 )
 
 # Create Executable

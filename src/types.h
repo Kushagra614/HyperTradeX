@@ -41,6 +41,7 @@ struct Statistics
     double avg_entry_latency_us;
     double avg_exit_latency_us;
     double p99_latency_us;
+    double p50_latency_us;
 };
 
 

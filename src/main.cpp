@@ -78,6 +78,7 @@ int main() {
         cout << left << setw(25) << "Avg Entry Latency:" << stats.avg_entry_latency_us << " μs" << endl;
         cout << left << setw(25) << "Avg Exit Latency:" << stats.avg_exit_latency_us << " μs" << endl;
         cout << left << setw(25) << "P99 Latency:" << stats.p99_latency_us << " μs" << endl;
+        cout << left << setw(25) << "P50 Latency:" << stats.p50_latency_us << " μs" << endl;
         cout << "==========================================" << endl;
         
         return 0;

@@ -110,7 +110,7 @@ vector<Kline>BinanceClient::fetch_klines(
     auto latency_us = chrono::duration_cast<chrono::microseconds>(end - start).count();
 
     // s4-> printing the latency
-    cout<< "API Latency" << latency_us<<" us (" << (latency_us / 1000 ) << " ms)"<<endl;
+    cout<< "API Latency: " << latency_us<<" us (" << (latency_us / 1000 ) << " ms)"<<endl;
 
     //s5-> parse the json into Kline objects
     vector<Kline> klines = parse_klines_json(json_response);
@@ -131,10 +131,25 @@ vector<Kline>BinanceClient::parse_klines_json(const string& json_response)
     {
         uint64_t timestamp_ms = kline_array[0].get<uint64_t>();
         double open = stod(kline_array[1].get<string>());
+        double high = stod(kline_array[2].get<string>());
+        double low = stod(kline_array[3].get<string>());
+        double close = stod(kline_array[4].get<string>());
+        double volume = stod(kline_array[5].get<string>());
+
+        //create and add kline to vec
+        Kline kline{timestamp_ms, 0, open, high, low, close, volume};
+        klines.push_back(kline);
     }
-} catch(...){ }
+} catch(const exception& e){
+    throw runtime_error("Failed to parse klines JSON: " + string(e.what()));
+ }
+
+
 return klines;
-}
+
+};
+
+
 
 
 

@@ -25,23 +25,25 @@ optional<Trade> Executor::on_kline(const Kline& kline, const Strategy::Decision&
     
     // BUYING: Enter a position
     if (decision.is_buy) {
-        auto start = chrono::high_resolution_clock::now();
         entry_price_ = kline.close;
         entry_time_ms_ = kline.timestamp_ms;
         quantity_ = decision.quantity;
         has_position_ = true;
-        auto end = chrono::high_resolution_clock::now();
-        entry_latency_us_ = chrono::duration_cast<chrono::microseconds>(end - start).count();
+        // Record current time in microseconds for latency calculation
+        auto now = chrono::high_resolution_clock::now();
+        uint64_t exec_time_us = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count();
+        entry_latency_us_ = exec_time_us - kline.fetch_time_ms;
         return nullopt;  // Trade not complete yet
     }
     
     // SELLING: Close the position
-    auto start = chrono::high_resolution_clock::now();
     double exit_price = kline.close;
     uint64_t exit_time = kline.timestamp_ms;
     double pnl = (exit_price - entry_price_) * static_cast<double>(quantity_);
-    auto end = chrono::high_resolution_clock::now();
-    exit_latency_us_ = chrono::duration_cast<chrono::microseconds>(end - start).count();
+    // Record current time in microseconds for latency calculation
+    auto now_exit = chrono::high_resolution_clock::now();
+    uint64_t exec_time_us_exit = chrono::duration_cast<chrono::microseconds>(now_exit.time_since_epoch()).count();
+    exit_latency_us_ = exec_time_us_exit - kline.fetch_time_ms;
     
     // Create completed Trade
     Trade completed_trade = {

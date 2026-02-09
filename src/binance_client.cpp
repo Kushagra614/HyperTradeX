@@ -122,6 +122,10 @@ vector<Kline>BinanceClient::fetch_klines(
 
 vector<Kline>BinanceClient::parse_klines_json(const string& json_response)
 {
+    auto now = chrono::high_resolution_clock::now();
+    // Store as microseconds since high_resolution_clock epoch
+    uint64_t fetch_time_ms = chrono::duration_cast<chrono::microseconds>(now.time_since_epoch()).count();
+
     vector<Kline>klines;
     try{
         json parsed = json::parse(json_response);
@@ -134,10 +138,10 @@ vector<Kline>BinanceClient::parse_klines_json(const string& json_response)
         double high = stod(kline_array[2].get<string>());
         double low = stod(kline_array[3].get<string>());
         double close = stod(kline_array[4].get<string>());
-        double volume = stod(kline_array[5].get<string>());
+        double volume = stod(kline_array[7].get<string>());
 
         //create and add kline to vec
-        Kline kline{timestamp_ms, 0, open, high, low, close, volume};
+        Kline kline{timestamp_ms, fetch_time_ms, 0, open, high, low, close, volume};
         klines.push_back(kline);
     }
 } catch(const exception& e){
@@ -148,9 +152,6 @@ vector<Kline>BinanceClient::parse_klines_json(const string& json_response)
 return klines;
 
 };
-
-
-
 
 
 BinanceClient::BinanceClient(const string& api_base) 

@@ -39,7 +39,7 @@ Kline Parser::parse_kline(const string& line) {
     double volume = stod(field);
     
     // Create and return Kline
-    return Kline{timestamp_ms, symbol_id, open, high, low, close, volume};
+    return Kline{timestamp_ms, 0, symbol_id, open, high, low, close, volume};
 
 }
 

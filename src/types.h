@@ -8,6 +8,7 @@ All 32-bit fields together */
 struct Kline
 {
     uint64_t timestamp_ms;
+    uint64_t fetch_time_ms;
     uint32_t symbol_id;
     double open;
     double high;

@@ -10,14 +10,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Compiler Flags
 set(CMAKE_CXX_COMPILER g++)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -O2 -march=native")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -O2 -march=native -g")
 
 # Include Directories
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
 # Source Files
 set(SOURCES
-    src/main.cpp
+    src/mainCSV.cpp
     src/data_loader.cpp
     src/parser.cpp
     src/replay_engine.cpp
@@ -52,14 +52,14 @@ add_executable(hypertradex_api ${SOURCES_API})
 target_link_libraries(hypertradex_api PUBLIC ${CURL_LIBRARIES})
 target_include_directories(hypertradex_api PUBLIC ${CURL_INCLUDE_DIRS})
 
-# Create Debug executable - Raw API data viewer
-set(SOURCES_DEBUG
-    src/debug_api.cpp
-    src/binance_client.cpp
-)
+# # Create Debug executable - Raw API data viewer
+# set(SOURCES_DEBUG
+#     src/debug_api.cpp
+#     src/binance_client.cpp
+# )
 
-add_executable(debug_api ${SOURCES_DEBUG})
+# add_executable(debug_api ${SOURCES_DEBUG})
 
 # Link CURL for debug executable
-target_link_libraries(debug_api PUBLIC ${CURL_LIBRARIES})
-target_include_directories(debug_api PUBLIC ${CURL_INCLUDE_DIRS})
+# target_link_libraries(debug_api PUBLIC ${CURL_LIBRARIES})
+# target_include_directories(debug_api PUBLIC ${CURL_INCLUDE_DIRS})
